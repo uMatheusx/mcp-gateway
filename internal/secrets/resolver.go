@@ -17,6 +17,16 @@ type Resolver struct {
 	cache     *ttlcache.Cache[string, SecretValue]
 }
 
+// NewTestResolver cria um Resolver com providers controlados pelo chamador.
+// Destinado exclusivamente a testes — não usar em produção.
+func NewTestResolver(providers map[string]Provider) *Resolver {
+	cache := ttlcache.New[string, SecretValue](
+		ttlcache.WithTTL[string, SecretValue](15 * time.Minute),
+	)
+	go cache.Start()
+	return &Resolver{providers: providers, cache: cache}
+}
+
 // NewResolver inicializa o Resolver detectando os providers disponíveis no ambiente.
 // Providers não disponíveis são ignorados com aviso — o gateway sobe mesmo assim.
 func NewResolver(ctx context.Context) (*Resolver, error) {
