@@ -1,0 +1,90 @@
+name: "local-dev-gateway"
+version: "1.0"
+
+apis:
+  jsonplaceholder:
+    base_url: "https://jsonplaceholder.typicode.com"
+    auth:
+      type: none
+    timeout: 10s
+    retry:
+      max_attempts: 3
+      backoff: exponential
+      initial_delay: 500ms
+      max_delay: 10s
+
+tools:
+  get_user:
+    api: jsonplaceholder
+    description: "Get a user by ID. Returns name, email, phone, website and address."
+    method: GET
+    path: "/users/{user_id}"
+    parameters:
+      - name: user_id
+        in: path
+        type: integer
+        required: true
+        description: "User ID (1–10)"
+
+  list_users:
+    api: jsonplaceholder
+    description: "List all users."
+    method: GET
+    path: "/users"
+
+  list_posts:
+    api: jsonplaceholder
+    description: "List posts, optionally filtered by user ID."
+    method: GET
+    path: "/posts"
+    parameters:
+      - name: userId
+        in: query
+        type: integer
+        required: false
+        description: "Filter posts by this user ID"
+
+  get_post:
+    api: jsonplaceholder
+    description: "Get a single post by ID."
+    method: GET
+    path: "/posts/{post_id}"
+    parameters:
+      - name: post_id
+        in: path
+        type: integer
+        required: true
+        description: "Post ID (1–100)"
+
+  list_comments:
+    api: jsonplaceholder
+    description: "List comments for a post."
+    method: GET
+    path: "/posts/{post_id}/comments"
+    parameters:
+      - name: post_id
+        in: path
+        type: integer
+        required: true
+        description: "Post ID"
+
+  create_post:
+    api: jsonplaceholder
+    description: "Create a new post (simulated — JSONPlaceholder does not persist)."
+    method: POST
+    path: "/posts"
+    body:
+      type: object
+      properties:
+        - name: title
+          type: string
+          required: true
+          description: "Post title"
+        - name: body
+          type: string
+          required: true
+          description: "Post content"
+        - name: userId
+          type: integer
+          required: true
+          description: "Author user ID"
